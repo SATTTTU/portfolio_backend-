@@ -8,129 +8,93 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
-namespace OverviewService
+namespace Payment
 {
     public class PaymentAppService : ApplicationService, IOverviewAppService
     {
         private readonly IOverviewRepository _repository;
         private readonly ILogger<PaymentAppService> _logger;
-        private readonly PaymentApplicationMappers _mapper;
 
         public PaymentAppService(
             IOverviewRepository repository,
-            ILogger<PaymentAppService> logger,
-            PaymentApplicationMappers mappers)  
+            ILogger<PaymentAppService> logger)
         {
             _repository = repository;
             _logger = logger;
-            _mapper = mappers;
         }
 
         public async Task<OverviewResponse> CreateAsync(CreateOverviewDto input)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             try
             {
-                if (input is null)
-                {
-                    throw new ArgumentNullException(nameof(input));
-                }
-
-                var overview = _mapper.Map(input);
+                var overview = input.ToEntity();
 
                 await _repository.AddAsync(overview);
                 await _repository.SaveChangesAsync();
 
-                return _mapper.Map(overview);
+                return overview.ToResponse();
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error occurred while creating overview. Input: {@Input}",
-                    input
-                );
-
-                throw new UserFriendlyException(
-                    "Overview creation failed.",
-                    "Please try again later or contact support."
-                );
+                _logger.LogError(ex, "Error occurred while creating overview. Input: {@Input}", input);
+                throw new UserFriendlyException("Overview creation failed.", "Please try again later or contact support.");
             }
         }
-
 
         public async Task<Guid> DeleteAsync(Guid id)
         {
             try
             {
                 await _repository.DeleteAsync(id);
+                await _repository.SaveChangesAsync();
                 return id;
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error occurred while deleting overview. Id: {Id}",
-                    id
-                );
-
-                throw new UserFriendlyException(
-                    "Delete operation failed.",
-                    $"Overview with id '{id}' could not be deleted."
-                );
+                _logger.LogError(ex, "Error occurred while deleting overview. Id: {Id}", id);
+                throw new UserFriendlyException("Delete operation failed.", $"Overview with id '{id}' could not be deleted.");
             }
         }
 
         public async Task<OverviewResponse> GetByIdAsync(Guid id)
         {
-            try
-            {
-                var overview = await _repository.GetByIdAsync(id);
+            var overview = await _repository.GetByIdAsync(id);
 
-                if (overview == null)
-                {
-                    throw new BusinessException("Overview.NotFound")
-                        .WithData("Id", id);
-                }
-
-                return ObjectMapper.Map<Overviews, OverviewResponse>(overview);
-            }
-            catch (BusinessException)
+            if (overview == null)
             {
-                throw;
+                throw new BusinessException("Overview.NotFound").WithData("Id", id);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Error occurred while fetching overview. Id: {Id}",
-                    id
-                );
 
-                throw new UserFriendlyException(
-                    "Failed to retrieve overview.",
-                    "The requested overview could not be fetched."
-                );
-            }
+            return overview.ToResponse();
         }
 
-        public async Task UpdateAsync( UpdateOverviewDto input,Guid id)
+        public async Task UpdateAsync(UpdateOverviewDto input, Guid id)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             try
             {
                 var overview = await _repository.GetByIdAsync(id);
 
                 if (overview == null)
                 {
-                    throw new BusinessException("Overview.NotFound")
-                        .WithData("Id", id);
+                    throw new BusinessException("Overview.NotFound").WithData("Id", id);
                 }
 
-                ObjectMapper.Map(input, overview);
+                overview.UpdateFromDto(input);
 
                 await _repository.UpdateAsync(overview);
+                await _repository.SaveChangesAsync();
             }
             catch (BusinessException)
             {
@@ -138,39 +102,24 @@ namespace OverviewService
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error occurred while updating overview. Id: {Id}, Input: {@Input}",
-                    id,
-                    input
-                );
-
-                throw new UserFriendlyException(
-                    "Update failed.",
-                    "Overview update could not be completed."
-                );
+                _logger.LogError(ex, "Error occurred while updating overview. Id: {Id}, Input: {@Input}", id, input);
+                throw new UserFriendlyException("Update failed.", "Overview update could not be completed.");
             }
         }
 
-        public async Task<ListResultDto<OverviewResponse>> GetOverviewsAsync(OverviewResponse response)
+        public async Task<List<OverviewResponse>> GetOverviewsAsync()
         {
             try
             {
                 var overviews = await _repository.GetAllAsync();
-
-                return new ListResultDto<OverviewResponse>(
-                    ObjectMapper.Map<List<Overviews>, List<OverviewResponse>>((List<Overviews>)overviews)
-                );
+                return overviews.ToResponseList();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching overviews.");
-
-                throw new UserFriendlyException(
-                    "Failed to load overviews.",
-                    "Overview list could not be retrieved."
-                );
+                throw new UserFriendlyException("Failed to load overviews.", "Overview list could not be retrieved.");
             }
         }
     }
 }
+

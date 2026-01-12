@@ -2,17 +2,23 @@
 
 namespace Payment.Entities
 {
-    public class Overviews
+    public class Overview
     {
         public Guid Id { get; private set; }
         public string Title { get; private set; } = default!;
         public string? ImageUrl { get; private set; }
 
-        protected Overviews() { } // EF Core only
+        protected Overview() { } // EF Core only
 
-        public Overviews(string title, string? imageUrl)
+        public Overview(string title, string? imageUrl)
         {
             Id = Guid.NewGuid();
+            SetTitle(title);
+            SetImageUrl(imageUrl);
+        }
+
+        public void Update(string title, string? imageUrl)
+        {
             SetTitle(title);
             SetImageUrl(imageUrl);
         }
@@ -33,3 +39,4 @@ namespace Payment.Entities
         }
     }
 }
+

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Payment.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -30,6 +32,7 @@ public class Program
         {
             Log.Information("Starting Payment.HttpApi.Host.");
             var builder = WebApplication.CreateBuilder(args);
+           
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.ListenAnyIP(

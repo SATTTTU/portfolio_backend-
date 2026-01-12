@@ -29,6 +29,7 @@ using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 
 namespace Payment;
 
@@ -104,6 +105,10 @@ public class PaymentHttpApiHostModule : AbpModule
 
             options.Applications["Angular"].RootUrl = configuration["App:ClientUrl"];
             options.Applications["Angular"].Urls[AccountUrlNames.PasswordReset] = "account/reset-password";
+        });
+        Configure<AbpAntiForgeryOptions>(options =>
+        {
+            options.AutoValidate = false;
         });
     }
 

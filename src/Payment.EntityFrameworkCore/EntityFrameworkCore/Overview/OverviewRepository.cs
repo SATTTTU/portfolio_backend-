@@ -16,12 +16,12 @@ public class OverviewRepository : IOverviewRepository
         _context = context;
     }
 
-    public async Task AddAsync(Overviews overview)
+    public async Task AddAsync(Overview overview)
     {
         await _context.Overviews.AddAsync(overview);
     }
 
-    public Task UpdateAsync(Overviews overview)
+    public Task UpdateAsync(Overview overview)
     {
         _context.Overviews.Update(overview);
         return Task.CompletedTask;
@@ -34,15 +34,14 @@ public class OverviewRepository : IOverviewRepository
             _context.Overviews.Remove(entity);
     }
 
-    public Task<Overviews?> GetByIdAsync(Guid id)
+    public Task<Overview?> GetByIdAsync(Guid id)
     {
         return _context.Overviews.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public Task<IQueryable<Overviews>> GetAllAsync()
+    public async Task<List<Overview>> GetAllAsync()
     {
-       var overviews =  _context.Overviews.AsQueryable();
-        return Task.FromResult(overviews);
+        return await _context.Overviews.ToListAsync();
     }
 
 
@@ -52,3 +51,4 @@ public class OverviewRepository : IOverviewRepository
     }
 
 }
+

@@ -25,7 +25,7 @@ public class PaymentDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
-    public DbSet<Entities.Overviews> Overviews { get; set; }
+    public DbSet<Entities.Overview> Overviews { get; set; }
 
     #region Entities from the modules
 
@@ -84,7 +84,7 @@ public class PaymentDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
-        builder.Entity<Entities.Overviews>(builder =>
+        builder.Entity<Entities.Overview>(builder =>
         {
             builder.ToTable(PaymentConsts.DbTablePrefix + "Overviews", PaymentConsts.DbSchema);
             builder.ConfigureByConvention(); //auto configure for the base class props

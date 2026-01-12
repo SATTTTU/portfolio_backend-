@@ -13,6 +13,6 @@ namespace Payment.Interfaces
         public Task UpdateAsync(UpdateOverviewDto input, Guid id);
         public Task<Guid> DeleteAsync(Guid id);
         public Task<OverviewResponse> GetByIdAsync(Guid id);
-        public Task<ListResultDto<OverviewResponse>> GetOverviewsAsync(OverviewResponse response);
+        public Task<List<OverviewResponse>> GetOverviewsAsync();
     }
 }

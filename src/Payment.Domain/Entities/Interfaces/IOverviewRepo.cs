@@ -8,11 +8,12 @@ namespace Payment.Domain.Repositories
 {
     public interface IOverviewRepository
     {
-        Task AddAsync(Overviews overview);
-        Task UpdateAsync(Overviews overview);
+        Task AddAsync(Overview overview);
+        Task UpdateAsync(Overview overview);
         Task DeleteAsync(Guid id);
-        Task<Overviews> GetByIdAsync(Guid id);
-        Task<IQueryable<Overviews>> GetAllAsync();
+        Task<Overview?> GetByIdAsync(Guid id);
+        Task<List<Overview>> GetAllAsync();
         Task SaveChangesAsync();
     }
 }
+
