@@ -3,7 +3,7 @@ using Payment.Entities;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Payment
+namespace Payment.Extensions
 {
     public static class OverviewMappingExtensions
     {

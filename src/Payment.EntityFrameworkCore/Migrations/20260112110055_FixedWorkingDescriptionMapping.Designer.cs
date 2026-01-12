@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Payment.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Payment.Migrations
 {
     [DbContext(typeof(PaymentDbContext))]
-    partial class PaymentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260112110055_FixedWorkingDescriptionMapping")]
+    partial class FixedWorkingDescriptionMapping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,24 +43,6 @@ namespace Payment.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AppOverviews", (string)null);
-                });
-
-            modelBuilder.Entity("Payment.Entities.Skills", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppSkills", (string)null);
                 });
 
             modelBuilder.Entity("Payment.Entities.Working", b =>
@@ -91,12 +76,12 @@ namespace Payment.Migrations
             modelBuilder.Entity("Payment.Entities.WorkingDescription", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("WorkingId")
                         .HasColumnType("uuid");
@@ -105,7 +90,7 @@ namespace Payment.Migrations
 
                     b.HasIndex("WorkingId");
 
-                    b.ToTable("WorkingDescription", "public");
+                    b.ToTable("WorkingDescription");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>

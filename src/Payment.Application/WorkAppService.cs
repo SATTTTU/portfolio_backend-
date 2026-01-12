@@ -12,20 +12,20 @@ using Volo.Abp.Application.Services;
 
 namespace Payment
 {
-    public class PaymentAppService : ApplicationService, IOverviewAppService
+    public class WorkAppService : ApplicationService, IWorkAppService
     {
-        private readonly IOverviewRepository _repository;
-        private readonly ILogger<PaymentAppService> _logger;
+        private readonly IWorkRepository _repository;
+        private readonly ILogger<WorkAppService> _logger;
 
-        public PaymentAppService(
-            IOverviewRepository repository,
-            ILogger<PaymentAppService> logger)
+        public WorkAppService(
+            IWorkRepository repository,
+            ILogger<WorkAppService> logger)
         {
             _repository = repository;
             _logger = logger;
         }
 
-        public async Task<OverviewResponse> CreateAsync(CreateOverviewDto input)
+        public async Task<WorkResponse> CreateAsync(CreateWorkDto input)
         {
             if (input == null)
             {
@@ -63,7 +63,7 @@ namespace Payment
             }
         }
 
-        public async Task<OverviewResponse> GetByIdAsync(Guid id)
+        public async Task<WorkResponse> GetByIdAsync(Guid id)
         {
             var overview = await _repository.GetByIdAsync(id);
 
@@ -75,7 +75,7 @@ namespace Payment
             return overview.ToResponse();
         }
 
-        public async Task UpdateAsync(UpdateOverviewDto input, Guid id)
+        public async Task UpdateAsync(UpdateWorkDto input, Guid id)
         {
             if (input == null)
             {
@@ -107,7 +107,7 @@ namespace Payment
             }
         }
 
-        public async Task<List<OverviewResponse>> GetOverviewsAsync()
+        public async Task<List<WorkResponse>> GetWorksAsync()
         {
             try
             {

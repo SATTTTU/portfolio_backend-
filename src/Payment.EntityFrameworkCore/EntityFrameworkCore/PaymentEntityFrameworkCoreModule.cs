@@ -47,6 +47,8 @@ public class PaymentEntityFrameworkCoreModule : AbpModule
             options.AddDefaultRepositories(includeAllEntities: true);
         });
         context.Services.AddTransient<IOverviewRepository, OverviewRepository>();
+        context.Services.AddTransient<IWorkRepository, WorkRepository>();
+        context.Services.AddTransient<ISkillsRepository, SkillsRepository>();
 
         Configure<AbpDbContextOptions>(options =>
         {

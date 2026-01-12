@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Payment.Entities;
+using System.Collections.Generic;
+using System.Text.Json;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -26,6 +29,10 @@ public class PaymentDbContext :
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Entities.Overview> Overviews { get; set; }
+    public DbSet<Entities.Skills> Skills { get; set; }
+    public DbSet<Working> Workings { get; set; }
+    public DbSet<WorkingDescription> WorkingDescriptions { get; set; }
+
 
     #region Entities from the modules
 
@@ -76,14 +83,7 @@ public class PaymentDbContext :
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
 
-        /* Configure your own tables/entities inside here */
-
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(PaymentConsts.DbTablePrefix + "YourEntities", PaymentConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        
         builder.Entity<Entities.Overview>(builder =>
         {
             builder.ToTable(PaymentConsts.DbTablePrefix + "Overviews", PaymentConsts.DbSchema);
@@ -101,6 +101,57 @@ public class PaymentDbContext :
                    
         
                                         //...
+        });
+        builder.Entity<Working>(builder =>
+        {
+            builder.ToTable(PaymentConsts.DbTablePrefix + "Workings", PaymentConsts.DbSchema);
+            builder.ConfigureByConvention();
+
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedNever();
+
+            builder.HasMany(w => w.Descriptions)
+                .WithOne()
+                .HasForeignKey("WorkingId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Navigation(w => w.Descriptions)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            builder.Property(x => x.StartedAt).IsRequired();
+            builder.Property(x => x.LeftAt);
+            builder.Property(x => x.IsWorking).IsRequired();
+            builder.Property(x => x.WorkedAt)
+                .IsRequired()
+                .HasMaxLength(200);
+        });
+        builder.Entity<WorkingDescription>(builder =>
+        {
+              builder.ToTable("WorkingDescription", "public");
+
+            builder.ConfigureByConvention();
+
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Id)
+                   .ValueGeneratedNever();
+
+            builder.Property(x => x.Value)
+                   .IsRequired()
+                   .HasMaxLength(500);
+        });
+        builder.Entity<Entities.Skills>(builder =>
+        {
+            builder.ToTable(PaymentConsts.DbTablePrefix + "Skills", PaymentConsts.DbSchema);
+            builder.ConfigureByConvention();
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedNever();
+
+            builder.Property(x => x.Name)
+                   .IsRequired()
+                   .HasMaxLength(100);
+
+            builder.Property(x => x.ImageUrl);
         });
     }
 }
