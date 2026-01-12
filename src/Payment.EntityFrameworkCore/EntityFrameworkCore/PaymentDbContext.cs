@@ -30,6 +30,7 @@ public class PaymentDbContext :
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Entities.Overview> Overviews { get; set; }
     public DbSet<Entities.Skills> Skills { get; set; }
+    public DbSet<Entities.Projects> Projects { get; set; }
     public DbSet<Working> Workings { get; set; }
     public DbSet<WorkingDescription> WorkingDescriptions { get; set; }
 
@@ -152,6 +153,26 @@ public class PaymentDbContext :
                    .HasMaxLength(100);
 
             builder.Property(x => x.ImageUrl);
+        });
+
+        builder.Entity<Entities.Projects>(builder =>
+        {
+            builder.ToTable(PaymentConsts.DbTablePrefix + "Projects", PaymentConsts.DbSchema);
+            builder.ConfigureByConvention();
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedNever();
+
+            builder.Property(x => x.Title)
+                   .IsRequired()
+                   .HasMaxLength(200);
+
+            builder.Property(x => x.Description)
+                   .IsRequired()
+                   .HasMaxLength(2000);
+
+            builder.Property(x => x.ImageUrl);
+            builder.Property(x => x.ProjectUrl);
+            builder.Property(x => x.GithubUrl);
         });
     }
 }
