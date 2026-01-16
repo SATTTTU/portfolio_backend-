@@ -11,7 +11,7 @@ namespace Payment.Entities
         public string? ProjectUrl { get; private set; }
         public string? GithubUrl { get; private set; }
 
-        protected Projects() { } // EF Core only
+        protected Projects() { }
 
         public Projects(string title, string description, string? imageUrl, string? projectUrl, string? githubUrl)
         {

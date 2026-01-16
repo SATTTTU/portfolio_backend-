@@ -6,6 +6,7 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -25,8 +26,11 @@ public class PaymentApplicationModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        context.Services.AddHttpContextAccessor();
         Configure<AbpAutoMapperOptions>(options =>
+
         {
+           
             options.AddMaps<PaymentApplicationModule>();
         });
     }

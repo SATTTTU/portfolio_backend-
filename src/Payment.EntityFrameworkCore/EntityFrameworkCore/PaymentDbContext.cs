@@ -33,7 +33,7 @@ public class PaymentDbContext :
     public DbSet<Entities.Projects> Projects { get; set; }
     public DbSet<Working> Workings { get; set; }
     public DbSet<WorkingDescription> WorkingDescriptions { get; set; }
-
+    public DbSet<Visitor> Visitors { get; set; }
 
     #region Entities from the modules
 
@@ -173,6 +173,19 @@ public class PaymentDbContext :
             builder.Property(x => x.ImageUrl);
             builder.Property(x => x.ProjectUrl);
             builder.Property(x => x.GithubUrl);
+        });
+        builder.Entity<Visitor>(b =>
+        {
+            b.ToTable(PaymentConsts.DbTablePrefix + "Visitors", PaymentConsts.DbSchema);
+            b.ConfigureByConvention();
+
+
+            b.Property(x => x.Identity)
+            .IsRequired()
+            .HasMaxLength(100);
+
+
+            b.HasIndex(x => x.Identity).IsUnique();
         });
     }
 }
